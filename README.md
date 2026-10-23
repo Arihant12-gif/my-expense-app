@@ -1,4 +1,10 @@
+Based on Expense-Tracker-App by Priyanshu9898 (MIT License):
+https://github.com/Priyanshu9898/Expense-Tracker-App
 
+My changes:
+- (baad mein apne features yahan likhna)
+
+---
 # Expense Management System using MERN Stack
 
 ### Live Website: https://main.d1sj7cd70hlter.amplifyapp.com/
