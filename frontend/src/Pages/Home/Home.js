@@ -1,3 +1,35 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 import React, { useEffect, useState } from "react";
 import Header from "../../components/Header";
 import { useNavigate } from "react-router-dom";
@@ -15,10 +47,10 @@ import "react-datepicker/dist/react-datepicker.css";
 import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import Analytics from "./Analytics";
-
+ 
 const Home = () => {
   const navigate = useNavigate();
-
+ 
   const toastOptions = {
     position: "bottom-right",
     autoClose: 2000,
@@ -39,24 +71,25 @@ const Home = () => {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [view, setView] = useState("table");
-
+  const [searchText, setSearchText] = useState("");
+ 
   const handleStartChange = (date) => {
     setStartDate(date);
   };
-
+ 
   const handleEndChange = (date) => {
     setEndDate(date);
   };
-
+ 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-
+ 
   useEffect(() => {
     const avatarFunc = async () => {
       if (localStorage.getItem("user")) {
         const user = JSON.parse(localStorage.getItem("user"));
         console.log(user);
-
+ 
         if (user.isAvatarImageSet === false || user.avatarImage === "") {
           navigate("/setAvatar");
         }
@@ -66,10 +99,10 @@ const Home = () => {
         navigate("/login");
       }
     };
-
+ 
     avatarFunc();
   }, [navigate]);
-
+ 
   const [values, setValues] = useState({
     title: "",
     amount: "",
@@ -78,25 +111,25 @@ const Home = () => {
     date: "",
     transactionType: "",
   });
-
+ 
   const handleChange = (e) => {
     setValues({ ...values, [e.target.name]: e.target.value });
   };
-
+ 
   const handleChangeFrequency = (e) => {
     setFrequency(e.target.value);
   };
-
+ 
   const handleSetType = (e) => {
     setType(e.target.value);
   };
-
+ 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+ 
     const { title, amount, description, category, date, transactionType } =
       values;
-
+ 
     if (
       !title ||
       !amount ||
@@ -108,7 +141,7 @@ const Home = () => {
       toast.error("Please enter all the fields", toastOptions);
     }
     setLoading(true);
-
+ 
     const { data } = await axios.post(addTransaction, {
       title: title,
       amount: amount,
@@ -118,7 +151,7 @@ const Home = () => {
       transactionType: transactionType,
       userId: cUser._id,
     });
-
+ 
     if (data.success === true) {
       toast.success(data.message, toastOptions);
       handleClose();
@@ -126,23 +159,19 @@ const Home = () => {
     } else {
       toast.error(data.message, toastOptions);
     }
-
+ 
     setLoading(false);
   };
-
+ 
   const handleReset = () => {
     setType("all");
     setStartDate(null);
     setEndDate(null);
     setFrequency("7");
+    setSearchText("");
   };
-
-
-  
-
-
+ 
   useEffect(() => {
-
     const fetchAllTransactions = async () => {
       try {
         setLoading(true);
@@ -155,31 +184,42 @@ const Home = () => {
           type: type,
         });
         console.log(data);
-  
+ 
         setTransactions(data.transactions);
-  
+ 
         setLoading(false);
       } catch (err) {
         // toast.error("Error please Try again...", toastOptions);
         setLoading(false);
       }
     };
-
+ 
     fetchAllTransactions();
   }, [refresh, frequency, endDate, type, startDate]);
-
+ 
   const handleTableClick = (e) => {
     setView("table");
   };
-
+ 
   const handleChartClick = (e) => {
     setView("chart");
   };
-
+ 
+  // Search: filter transactions by title, description or category
+  const filteredTransactions = (transactions || []).filter((t) => {
+    const text = searchText.trim().toLowerCase();
+    if (!text) return true;
+    return (
+      (t.title || "").toLowerCase().includes(text) ||
+      (t.description || "").toLowerCase().includes(text) ||
+      (t.category || "").toLowerCase().includes(text)
+    );
+  });
+ 
   return (
     <>
       <Header />
-
+ 
       {loading ? (
         <>
           <Spinner />
@@ -206,7 +246,7 @@ const Home = () => {
                   </Form.Select>
                 </Form.Group>
               </div>
-
+ 
               <div className="text-white type">
                 <Form.Group className="mb-3" controlId="formSelectFrequency">
                   <Form.Label>Type</Form.Label>
@@ -221,7 +261,7 @@ const Home = () => {
                   </Form.Select>
                 </Form.Group>
               </div>
-
+ 
               <div className="text-white iconBtnBox">
                 <FormatListBulletedIcon
                   sx={{ cursor: "pointer" }}
@@ -238,7 +278,7 @@ const Home = () => {
                   }`}
                 />
               </div>
-
+ 
               <div>
                 <Button onClick={handleShow} className="addNew">
                   Add New
@@ -262,7 +302,7 @@ const Home = () => {
                           onChange={handleChange}
                         />
                       </Form.Group>
-
+ 
                       <Form.Group className="mb-3" controlId="formAmount">
                         <Form.Label>Amount</Form.Label>
                         <Form.Control
@@ -273,7 +313,7 @@ const Home = () => {
                           onChange={handleChange}
                         />
                       </Form.Group>
-
+ 
                       <Form.Group className="mb-3" controlId="formSelect">
                         <Form.Label>Category</Form.Label>
                         <Form.Select
@@ -294,7 +334,7 @@ const Home = () => {
                           <option value="Other">Other</option>
                         </Form.Select>
                       </Form.Group>
-
+ 
                       <Form.Group className="mb-3" controlId="formDescription">
                         <Form.Label>Description</Form.Label>
                         <Form.Control
@@ -305,7 +345,7 @@ const Home = () => {
                           onChange={handleChange}
                         />
                       </Form.Group>
-
+ 
                       <Form.Group className="mb-3" controlId="formSelect1">
                         <Form.Label>Transaction Type</Form.Label>
                         <Form.Select
@@ -318,7 +358,7 @@ const Home = () => {
                           <option value="expense">Expense</option>
                         </Form.Select>
                       </Form.Group>
-
+ 
                       <Form.Group className="mb-3" controlId="formDate">
                         <Form.Label>Date</Form.Label>
                         <Form.Control
@@ -328,7 +368,7 @@ const Home = () => {
                           onChange={handleChange}
                         />
                       </Form.Group>
-
+ 
                       {/* Add more form inputs as needed */}
                     </Form>
                   </Modal.Body>
@@ -344,7 +384,7 @@ const Home = () => {
               </div>
             </div>
             <br style={{ color: "white" }}></br>
-
+ 
             {frequency === "custom" ? (
               <>
                 <div className="date">
@@ -382,19 +422,26 @@ const Home = () => {
             ) : (
               <></>
             )}
-
+ 
             <div className="containerBtn">
               <Button variant="primary" onClick={handleReset}>
                 Reset Filter
               </Button>
             </div>
+            <Form.Control
+              type="text"
+              className="mt-3 mb-3"
+              placeholder="Search by title, description or category"
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+            />
             {view === "table" ? (
               <>
-                <TableData data={transactions} user={cUser} />
+                <TableData data={filteredTransactions} user={cUser} />
               </>
             ) : (
               <>
-                <Analytics transactions={transactions} user={cUser} />
+                <Analytics transactions={filteredTransactions} user={cUser} />
               </>
             )}
             <ToastContainer />
@@ -404,5 +451,6 @@ const Home = () => {
     </>
   );
 };
-
+ 
 export default Home;
+ 
