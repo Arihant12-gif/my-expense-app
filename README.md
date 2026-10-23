@@ -3,13 +3,17 @@ https://github.com/Priyanshu9898/Expense-Tracker-App
 
 My changes:
    - Added search by title, description and category on the Home page
+   - Added search by title, description and category on the Home page (works on both table and chart view)
+   - Configured the app to run locally (localhost backend, CORS)
+        ### Local setup notes
+   - Create `backend/config/config.env` with your own `MONGO_URL` (MongoDB Atlas) and `PORT=5000`
+   - In `frontend/src/utils/ApiRequest.js`, `host` is set to `http://localhost:5000`
+   - Start backend: `cd backend && npm install && npm run dev`
+   - Start frontend: `cd frontend && npm install && npm start`
 
 ---
 # Expense Management System using MERN Stack
 
-### Live Website: https://main.d1sj7cd70hlter.amplifyapp.com/
-
-### Vercel Link: https://expense-tracker-app-three-beryl.vercel.app/
 
 ## Project Description:
 
