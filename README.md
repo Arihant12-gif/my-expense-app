@@ -2,7 +2,7 @@ Based on Expense-Tracker-App by Priyanshu9898 (MIT License):
 https://github.com/Priyanshu9898/Expense-Tracker-App
 
 My changes:
-- (baad mein apne features yahan likhna)
+   - Added search by title, description and category on the Home page
 
 ---
 # Expense Management System using MERN Stack
